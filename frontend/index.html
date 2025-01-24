@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Translator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        textarea, select, button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Code Translator</h1>
+        <form id="translateForm">
+            <label for="inputCode">Input Code:</label>
+            <textarea id="inputCode" name="inputcode" rows="8" placeholder="Paste your code here..."></textarea>
+            
+            <label for="outputLanguage">Output Language:</label>
+            <select id="outputLanguage" name="outputlanguage">
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+                <option value="java">Java</option>
+                <!-- Add more languages as needed -->
+            </select>
+            
+            <button type="submit">Translate</button>
+        </form>
+        <div id="output" class="output" hidden>
+            <h3>Translated Code:</h3>
+            <div id="outputCode"></div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('translateForm');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const inputCode = document.getElementById('inputCode').value;
+            const outputLanguage = document.getElementById('outputLanguage').value;
+
+            // Send data to the backend
+            const response = await fetch('/translate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ inputcode: inputCode, outputlanguage: outputLanguage })
+            });
+
+            // Get the response and display it
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('outputCode').textContent = data.result;
+                document.getElementById('output').hidden = false;
+            } else {
+                document.getElementById('outputCode').textContent = 'Error occurred during translation.';
+                document.getElementById('output').hidden = false;
+            }
+        });
+    </script>
+</body>
+</html>
